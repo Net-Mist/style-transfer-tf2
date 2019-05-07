@@ -1,28 +1,30 @@
 # Style Transfer
 
-This repo is an implementation of [adaptive style transfer](https://arxiv.org/pdf/1807.10201.pdf) in tensorflow 2.  
+This is an implementation of [adaptive style transfer](https://arxiv.org/pdf/1807.10201.pdf) in tensorflow 2.  
 
 It demonstrates how to:
-  - Manage a dataset using tf.dataset and tfrecord files
-  - Build models using tf.keras high level API
-  - Write the training loop of a GAN using tf.function and tf.GradientTape 
+  - Manage a dataset using tf.dataset and tfrecord files.
+  - Build models using tf.keras high level API.
+  - Write the training loop of a GAN using tf.function and tf.GradientTape .
   - Export and infer using tf.SavedModel, TensorRT and TfSlim.
-  - Manage flags and logging using google abseil python package
+  - Manage flags and logging using google abseil python package.
   
 In the near future this code will also:
-  - allow training style transfer network following [Cartoon-GAN paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Chen_CartoonGAN_Generative_Adversarial_CVPR_2018_paper.pdf)
-   The code is writen but I'm still looking for good parameters
-  - demonstrate how to use style transfer on Android. I wrote models with the same kind of optimization presented in mobilenet v2 paper, the model is training well, and can be use
-  for inference on a computer, it can be exported in tfLite format but I still have some bug in the android app. 
+  - Allow training style transfer networks following [Cartoon-GAN paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Chen_CartoonGAN_Generative_Adversarial_CVPR_2018_paper.pdf)
+   The code is writen but I'm still looking for good parameters :)
+  - Demonstrate how to use style transfer on Android. I wrote models with the same kind of optimization presented in mobilenet v2 paper. The models train well, can be use
+  for inference on a computer and can be exported in tfLite format but I still have some bug in the android app. 
   
-Please note that the tensorflow 2 TensorRT API is still work in progress and that you need a more recent version of tensorflow than the 2.0.0a0 if you want to export and infer using
+Please note that the tensorflow 2 TensorRT API is still work in progress and that you need a more recent version of tensorflow than the 2.0.0a0 if you want to use
 tensorRT. To compile and build a docker image with a more recent version of tensorflow 2 please see [the readme inside trt_docker subdir](trt_docker/Readme.md)
+
+You will find some results in folder imgs. For instance:
 
 Original image:
 
 ![](imgs/20190414_163732.jpg)
 
-After style transfer:
+After style transfer with Picasso:
 
 ![](imgs/20190414_163732_p.jpg)
 
