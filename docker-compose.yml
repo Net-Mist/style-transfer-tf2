@@ -1,0 +1,64 @@
+version: "2.3"
+
+services:
+  style-transfer:
+    image: style_transfer:0.4
+    build: .
+    volumes:
+      - .:/opt/workspace
+      - ${PICTURE_DATASET}:/opt/picture_dataset
+      - ${ART_DATASET}:/opt/style_dataset
+      - ${EXPERIMENT}:/opt/experiment
+    environment:
+      - PICTURE_DATASET=/opt/picture_dataset
+      - ART_DATASET=/opt/art_dataset
+      - EXPERIMENT=/opt/experiment
+    runtime: nvidia
+    user: 1000:1000
+
+  export:
+    image: style_transfer:0.4
+    build: .
+    volumes:
+      - .:/opt/workspace
+      - ${CKPT_DIR_PATH}:/opt/saved/
+      - ${EXPORT_MODEL_PATH}:/opt/export
+    runtime: nvidia
+    user: 1000:1000
+
+  export_tflite:
+    image: style_transfer:0.4
+    build: .
+    volumes:
+      - .:/opt/workspace
+      - ${CKPT_DIR_PATH}:/opt/saved/
+      - ${EXPORT_MODEL_PATH}:/opt/export
+    runtime: nvidia
+    user: 1000:1000
+    environment:
+      - CUDA_VISIBLE_DEVICES=
+
+  inference:
+    image: style_transfer:0.4
+    build: .
+    volumes:
+      - .:/opt/workspace
+      - ${EXPORT_MODEL_PATH}:/opt/export
+      - ${INPUT_DIR}:/opt/input
+      - ${OUTPUT_DIR}:/opt/output
+    runtime: nvidia
+    user: 1000:1000
+    command: python3 app.py inference
+
+  inference_tflite:
+    image: style_transfer:0.4
+    build: .
+    volumes:
+      - .:/opt/workspace
+      - ${EXPORT_MODEL_PATH}:/opt/export/model.tflite
+      - ${INPUT_DIR}:/opt/input
+      - ${OUTPUT_DIR}:/opt/output
+    runtime: nvidia
+    user: 1000:1000
+    environment:
+      - CUDA_VISIBLE_DEVICES=
