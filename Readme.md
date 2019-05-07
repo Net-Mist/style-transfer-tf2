@@ -34,7 +34,8 @@ The easiest way to install this style transfer is by using docker. You need to i
 ## Training adaptive style transfer
 
 
-Content images used for training: [Places365-Standard high-res train images (105GB).](http://data.csail.mit.edu/places/places365/train_large_places365standard.tar)
+- Content images used for training: [Places365-Standard high-res train images (105GB).](http://data.csail.mit.edu/places/places365/train_large_places365standard.tar)
+- The research team that releases the adaptive style transfer paper also releases style image on [their owncloud](https://hcicloud.iwr.uni-heidelberg.de/index.php/s/NcJj2oLBTYuT1tf)
 
 ### Start docker
 If you want to use docker for the training, a solution is to run the docker-compose `style-transfer` app. For training you need to specified 3 environments variables : 
