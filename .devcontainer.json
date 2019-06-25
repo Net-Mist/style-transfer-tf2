@@ -1,0 +1,11 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+	"dockerFile": "Dockerfile",
+	"extensions": [
+		"eamodio.gitlens",
+		"ms-python.python",
+		"octref.vetur",
+		"njpwerner.autodocstring"
+	],
+	"postCreateCommand": "apt update && apt install -y git && /usr/bin/python3 -m pip install -U autopep8 --user"
+}
