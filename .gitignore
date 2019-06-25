@@ -2,4 +2,4 @@
 __pycache__
 src2
 tensorflow_pkg
-.tflite
+*.tflite

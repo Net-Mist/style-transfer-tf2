@@ -1,0 +1,98 @@
+paths:
+  /config:
+    get:
+      operationId: app.get_configure
+      summary: 'get backend information'
+      responses:
+        '200':
+          description: Ok
+          schema:
+            x-oad-type: array
+            type: array
+            title: camera_ports
+            description: 'Ports connected to cameras'
+            items:
+              x-oad-type: integer
+              type: integer
+              title: 'Available port'
+              description: 'One possible port to connect'
+              format: int32
+          x-oad-type: response
+    post:
+      operationId: app.post_configure
+      responses:
+        '200':
+          description: 'Configuration updated'
+          x-oad-type: response
+      parameters:
+        -
+          name: image_size
+          in: query
+          description: 'Size of the image processed by the neural network. Should be "{weight}x{height}"'
+          required: true
+          type: string
+          x-oad-type: parameter
+        -
+          name: camera_port
+          in: query
+          description: 'Port to use to get images. Usefull if several cameras are connected to the same computer'
+          required: true
+          type: string
+          x-oad-type: parameter
+        -
+          name: model_name
+          in: formData
+          description: 'Name of the model to load. For instance "Picasso" will use a model trained on Picasso images'
+          required: true
+          type: string
+          x-oad-type: parameter
+    x-oad-type: operation
+  /raw_image:
+    get:
+      operationId: app.get_raw_image
+      summary: 'Get the last available raw image'
+      responses:
+        '200':
+          description: ok
+          x-oad-type: response
+      parameters:
+        -
+          name: image
+          in: body
+          description: 'encoded image'
+          required: true
+          schema:
+            x-oad-type: string
+            type: string
+          x-oad-type: parameter
+    x-oad-type: operation
+  /processed_image:
+    get:
+      operationId: app.get_processed_image
+      summary: 'get the processed image'
+      responses:
+        '200':
+          description: ok
+          x-oad-type: response
+      parameters:
+        -
+          name: image
+          in: formData
+          description: 'encoded image'
+          required: true
+          type: string
+          x-oad-type: parameter
+    x-oad-type: operation
+info:
+  title: 'Style Transfer'
+  version: 1.0.0
+  description: 'Backend of the application to use Style Transfer'
+  contact:
+    name: 'Sébastien IOOSS'
+    url: 'https://github.com/Net-Mist/style-transfer-tf2'
+  license:
+    name: MIT
+basePath: /
+schemes:
+  - http
+swagger: '2.0'

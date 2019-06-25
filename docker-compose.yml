@@ -2,7 +2,7 @@ version: "2.3"
 
 services:
   style-transfer:
-    image: style_transfer:0.4
+    image: style_transfer:0.5
     build: .
     volumes:
       - .:/opt/workspace
