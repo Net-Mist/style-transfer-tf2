@@ -2,11 +2,19 @@ import time
 import threading
 import cv2
 import os
-import connexion
 import tensorflow as tf
 import numpy as np
 import logging
-from flask import url_for, redirect, Response, render_template
+from flask import Flask, url_for, redirect, Response, jsonify
+from flask_cors import CORS
+
+# Global var before starting the API
+camera = None
+inference_engine = None
+app = Flask(__name__)
+CORS(app)
+
+# Usefull methods and classes
 
 
 class Camera(threading.Thread):
@@ -96,11 +104,6 @@ class SavedModelInference:
         return image_postprocess(decoded_image)[4:-4, :, :]
 
 
-# Global var before starting the API
-camera = None
-inference_engine = None
-
-
 def inference(image):
     image = inference_engine.infer(image)
     ret, jpeg_encoded = cv2.imencode('.jpg', image)
@@ -108,31 +111,43 @@ def inference(image):
     return frame
 
 
-def gen_image():
-    last_get_frame_time = 0
-    while True:
-        current_time = time.time()
-        if current_time - last_get_frame_time < 1 / camera.fps:
-            time.sleep(last_get_frame_time + 1 / camera.fps - current_time)
-        last_get_frame_time = current_time
-
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+@app.route("/")
+def index():
+    return redirect(url_for('static', filename='index.html'))
 
 
-def gen_inference():
-    last_get_frame_time = 0
-    while True:
-        current_time = time.time()
-        if current_time - last_get_frame_time < 1 / camera.fps:
-            time.sleep(last_get_frame_time + 1 / camera.fps - current_time)
-        last_get_frame_time = current_time
+@app.route("/video_feed")
+def video_feed():
+    def gen_image():
+        last_get_frame_time = 0
+        while True:
+            current_time = time.time()
+            if current_time - last_get_frame_time < 1 / camera.fps:
+                time.sleep(last_get_frame_time + 1 / camera.fps - current_time)
+            last_get_frame_time = current_time
 
-        numpy_frame = camera.numpy_frame
+            frame = camera.get_frame()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    return Response(gen_image(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + inference(numpy_frame) + b'\r\n')
+
+@app.route("/inference_feed")
+def inference_feed():
+    def gen_inference():
+        last_get_frame_time = 0
+        while True:
+            current_time = time.time()
+            if current_time - last_get_frame_time < 1 / camera.fps:
+                time.sleep(last_get_frame_time + 1 / camera.fps - current_time)
+            last_get_frame_time = current_time
+
+            numpy_frame = camera.numpy_frame
+
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + inference(numpy_frame) + b'\r\n')
+
+    return Response(gen_inference(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def get_configure():
@@ -165,23 +180,7 @@ def main():
     print("load TF")
     inference_engine = SavedModelInference("/opt/model")
     print("TF loaded")
-
-    app = connexion.FlaskApp(__name__, specification_dir='openapi/')
-    app.add_api('swagger.yaml')
-
-    @app.route("/")
-    def index():
-        return redirect(url_for('static', filename='index.html'))
-
-    @app.route("/video_feed")
-    def video_feed():
-        return Response(gen_image(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-    @app.route("/inference_feed")
-    def inference_feed():
-        return Response(gen_inference(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-    app.run(port=8080)
+    app.run(host='0.0.0.0', threaded=True, port=8080)
 
 
 if __name__ == '__main__':

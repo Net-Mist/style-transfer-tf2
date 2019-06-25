@@ -1,4 +1,4 @@
 module.exports = {
     publicPath: './',
-    outputDir: '../back/static'
+    outputDir: '../static'
 }
