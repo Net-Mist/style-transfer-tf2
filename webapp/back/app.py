@@ -178,7 +178,7 @@ def main():
     camera.start()
 
     print("load TF")
-    inference_engine = SavedModelInference("/opt/model")
+    inference_engine = SavedModelInference("/opt/models/picasso")
     print("TF loaded")
     app.run(host='0.0.0.0', threaded=True, port=8080)
 

@@ -4,7 +4,7 @@ services:
     image: style_transfer/webapp:0.1
     build: .
     volumes:
-      - /mnt/nas/tf_experiments/style_transfer_tf2/piccasso_2/export/saved_model:/opt/model
+      - ./models:/opt/models
     devices:
       - /dev/video0
     ports:
