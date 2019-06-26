@@ -11,6 +11,10 @@ from flask_cors import CORS
 # Global var before starting the API
 camera = None
 inference_engine = None
+possible_models = []
+current_model = ""
+image_size = None
+
 app = Flask(__name__)
 CORS(app)
 
@@ -150,18 +154,19 @@ def inference_feed():
     return Response(gen_inference(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+@app.route("/config", methods=["GET"])
 def get_configure():
-    """Return the possible cameras port
-
-    Returns: list of int for the ports
-
+    """Return the list of models
     """
-    possibles_id = [int(file[5:]) for file in os.listdir("/dev") if "video" in file]
-    return {"camera_ports": possibles_id}, 200
+    return {"models": possible_models}
+
+@app.route("/config", methods=["POST"])
+def post_configure(image_size, model_name):
+    """Change the image size processed by the neural network and the model to use
+    """
+    message = flask.request.get_json()
 
 
-def post_configure(image_size, camera_port, model_name):
-    pass
 
 
 def get_raw_image():
@@ -173,12 +178,13 @@ def get_processed_image():
 
 
 def main():
-    global camera, inference_engine
+    global camera, inference_engine, possible_models
     camera = Camera()
     camera.start()
 
     print("load TF")
-    inference_engine = SavedModelInference("/opt/models/picasso")
+    possible_models = os.listdir("/opt/models")
+    inference_engine = SavedModelInference(os.path.join("/opt/models", possible_models[0]))
     print("TF loaded")
     app.run(host='0.0.0.0', threaded=True, port=8080)
 
