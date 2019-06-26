@@ -28,6 +28,10 @@ After style transfer with Picasso:
 
 ![](imgs/20190414_163732_p.jpg)
 
+## Running the web app
+Go to webapp dir, create a folder "models" and put picasso model inside. You can download it [here](https://drive.google.com/open?id=16HS7a8h_n6ddv1LNgNHBQIxgBSsw1Xxu)
+Then run `docker-compose up`. 
+
 ## Installation
 The easiest way to install this style transfer is by using docker. You need to install docker, docker-compose and nvidia-docker then run: `docker-compose build style-transfer` 
 
